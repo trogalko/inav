@@ -910,13 +910,40 @@ static const char * divertingToSafehomeMessage(void)
 }
 #endif
 
-static const char * navigationStateMessage(void)
+static const char * navigationStateMessage(bool showPartTwo)
 {
     switch (NAV_Status.state) {
         case MW_NAV_STATE_NONE:
             break;
         case MW_NAV_STATE_RTH_START:
-            return OSD_MESSAGE_STR(OSD_MSG_STARTING_RTH);
+            {
+                // Two part message. Part one states that altitude is changing. Part two specifies the target altitude.
+                if (!showPartTwo) {
+                    return OSD_MESSAGE_STR(OSD_MSG_STARTING_RTH);
+                } else {
+                    uint16_t rthAlt;
+                    char messageBuf[MAX(SETTING_MAX_NAME_LENGTH, OSD_MESSAGE_LENGTH + 1)];
+                    char *messagePtr = messageBuf;
+                    switch (osdConfig()->units) {
+                        case OSD_UNIT_UK:
+                            FALLTHROUGH;
+                        case OSD_UNIT_GA:
+                            FALLTHROUGH;
+                        case OSD_UNIT_IMPERIAL:
+                            rthAlt = round(CENTIMETERS_TO_FEET(posControl.rthState.rthInitialAltitude));
+                            tfp_sprintf(messageBuf, OSD_MESSAGE_STR(OSD_MSG_TARGET_ALTITUDE), rthAlt, "FT");
+                            break;
+                        default:
+                        case OSD_UNIT_METRIC_MPH:
+                            FALLTHROUGH;
+                        case OSD_UNIT_METRIC:
+                            rthAlt = round(CENTIMETERS_TO_METERS(posControl.rthState.rthInitialAltitude));
+                            tfp_sprintf(messageBuf, OSD_MESSAGE_STR(OSD_MSG_TARGET_ALTITUDE), rthAlt, "M");
+                            break;
+                    }
+                    return messagePtr;
+                }
+            }
         case MW_NAV_STATE_RTH_CLIMB:
             return OSD_MESSAGE_STR(OSD_MSG_RTH_CLIMB);
         case MW_NAV_STATE_RTH_ENROUTE:
@@ -4295,9 +4322,15 @@ textAttributes_t osdGetSystemMessage(char *buff, size_t buff_size, bool isCenter
                         messages[messageCount++] = messageBuf;
                     }
                 } else {
-                    const char *navStateMessage = navigationStateMessage();
+                    const char *navStateMessage = navigationStateMessage(false);
                     if (navStateMessage) {
                         messages[messageCount++] = navStateMessage;
+
+                        const char *navStateMessage = navigationStateMessage(true);
+
+                        if (navStateMessage) {
+                            messages[messageCount++] = navStateMessage;
+                        }
                     }
                 }
 #if defined(USE_SAFE_HOME)
