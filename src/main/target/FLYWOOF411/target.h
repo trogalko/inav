@@ -46,6 +46,14 @@
 
 // *************** SPI Gyro & ACC **********************
 
+#define USE_EXTI
+#ifdef FLYWOOF411_V2
+#define USE_IMU_BMI270
+#define BMI270_SPI_BUS          BUS_SPI1
+#define BMI270_CS_PIN           PA4
+#define IMU_BMI270_ALIGN        CW270_DEG_FLIP
+#define USE_MPU_DATA_READY_SIGNAL
+#else
 #define USE_IMU_MPU6000
 #define MPU6000_CS_PIN          PA4
 #define MPU6000_SPI_BUS         BUS_SPI1
@@ -55,10 +63,11 @@
 #define ICM20689_CS_PIN         PA4
 #define ICM20689_SPI_BUS        BUS_SPI1
 #define IMU_ICM20689_ALIGN      CW180_DEG
+#endif
 
-#define USE_EXTI
 #ifdef FLYWOOF411_V2
 #define GYRO_INT_EXTI           PB5
+#define BMI270_EXTI_PIN         GYRO_INT_EXTI
 #else
 #define GYRO_INT_EXTI           PB3
 #endif
@@ -75,6 +84,7 @@
 #define BARO_I2C_BUS		    BUS_I2C1
 #define USE_BARO_BMP280
 #define USE_BARO_MS5611
+#define USE_BARO_SPL06
 
 #define USE_MAG
 #define MAG_I2C_BUS             BUS_I2C1
@@ -84,6 +94,7 @@
 #define USE_MAG_IST8308
 #define USE_MAG_MAG3110
 #define USE_MAG_LIS3MDL
+#define USE_MAG_AK8975
 
 // *************** SPI OSD *****************************
 #define USE_MAX7456
