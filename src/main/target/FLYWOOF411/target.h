@@ -17,7 +17,10 @@
 //wakata
 #pragma once
 
-#ifdef FLYWOOF411_V2
+#ifdef FLYWOOF411_V3
+#define TARGET_BOARD_IDENTIFIER "FW43"
+#define USBD_PRODUCT_STRING     "FLYWOOF411V3"
+#elseif FLYWOOF411_V2
 #define TARGET_BOARD_IDENTIFIER "FW42"
 #define USBD_PRODUCT_STRING     "FLYWOOF411V2"
 #else
@@ -46,28 +49,26 @@
 
 // *************** SPI Gyro & ACC **********************
 
-#define USE_EXTI
-#ifdef FLYWOOF411_V2
+#ifdef FLYWOOF411_V3
 #define USE_IMU_BMI270
 #define BMI270_SPI_BUS          BUS_SPI1
 #define BMI270_CS_PIN           PA4
 #define IMU_BMI270_ALIGN        CW270_DEG_FLIP
-#define USE_MPU_DATA_READY_SIGNAL
 #else
 #define USE_IMU_MPU6000
 #define MPU6000_CS_PIN          PA4
 #define MPU6000_SPI_BUS         BUS_SPI1
 #define IMU_MPU6000_ALIGN       CW180_DEG
+#endif
 
 #define USE_IMU_ICM20689
 #define ICM20689_CS_PIN         PA4
 #define ICM20689_SPI_BUS        BUS_SPI1
 #define IMU_ICM20689_ALIGN      CW180_DEG
-#endif
 
-#ifdef FLYWOOF411_V2
+#define USE_EXTI
+#if defined(FLYWOOF411_V3) || defined(FLYWOOF411_V2)
 #define GYRO_INT_EXTI           PB5
-#define BMI270_EXTI_PIN         GYRO_INT_EXTI
 #else
 #define GYRO_INT_EXTI           PB3
 #endif
@@ -112,7 +113,7 @@
 #define USE_VCP
 
 #define USE_UART1
-#ifdef FLYWOOF411_V2
+#if defined(FLYWOOF411_V3) || defined(FLYWOOF411_V2)
 #define UART1_TX_PIN            PA9
 #define UART1_RX_PIN            PA10
 #else
@@ -121,7 +122,7 @@
 #endif
 
 #define USE_UART2
-#ifdef FLYWOOF411_V2
+#if defined(FLYWOOF411_V3) || defined(FLYWOOF411_V2)
 #define UART2_TX_PIN            PA2
 #else
 #define UART2_TX_PIN            NONE    //PA2
@@ -129,7 +130,7 @@
 #define UART2_RX_PIN            PA3
 
 #define USE_SOFTSERIAL1
-#ifdef FLYWOOF411_V2
+#if defined(FLYWOOF411_V3) || defined(FLYWOOF411_V2)
 #define SOFTSERIAL_1_TX_PIN     PB6     // Clash with TX2, possible to use as S.Port or VTX control
 #define SOFTSERIAL_1_RX_PIN     PB7
 #else
@@ -141,7 +142,7 @@
 
 #define DEFAULT_RX_TYPE         RX_TYPE_SERIAL
 #define SERIALRX_PROVIDER       SERIALRX_SBUS
-#ifdef FLYWOOF411_V2
+#if defined(FLYWOOF411_V3) || defined(FLYWOOF411_V2)
 #define SERIALRX_UART           SERIAL_PORT_USART1
 #else
 #define SERIALRX_UART           SERIAL_PORT_USART2
@@ -150,7 +151,7 @@
 #define USE_ADC
 #define ADC_INSTANCE                    ADC1
 #define ADC_CHANNEL_1_PIN               PA1
-#ifdef FLYWOOF411_V2
+#if defined(FLYWOOF411_V3) || defined(FLYWOOF411_V2)
 #define ADC_CHANNEL_2_PIN               PB1
 #define ADC_CHANNEL_3_PIN               PB0
 #else
@@ -164,7 +165,7 @@
 
 // *************** LED2812 ************************
 #define USE_LED_STRIP
-#ifdef FLYWOOF411_V2
+#if defined(FLYWOOF411_V3) || defined(FLYWOOF411_V2)
 #define WS2811_PIN                      PA0
 #else
 #define WS2811_PIN                      PA15
@@ -181,7 +182,7 @@
 #define TARGET_IO_PORTC         0xffff
 #define TARGET_IO_PORTD        (BIT(2))
 
-#ifdef FLYWOOF411_V2
+#if defined(FLYWOOF411_V3) || defined(FLYWOOF411_V2)
 #define MAX_PWM_OUTPUT_PORTS       6
 #else
 #define MAX_PWM_OUTPUT_PORTS       4
